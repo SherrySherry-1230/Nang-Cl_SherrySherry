@@ -24,6 +24,11 @@ MAX_OUTPUT_LENGTH=3500
 # Security Configuration
 ALLOW_PLAIN_TEXT_PROMPT=false
 
+# Auto Retry Configuration (토큰 초과 자동 재시도)
+AUTO_RETRY_ON_TOKEN_LIMIT=true
+MAX_AUTO_RETRIES=3
+RETRY_DELAY_SECONDS=5
+
 # Command Allowlist (comma-separated)
 ALLOWED_COMMANDS=git,npm,npx,python,python3,pip,pytest,ls,pwd,cat,grep,find,echo,cd,mkdir,touch
 ```

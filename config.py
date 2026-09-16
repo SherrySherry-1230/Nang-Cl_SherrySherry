@@ -27,6 +27,11 @@ class Config:
     # TUI Configuration
     TUI_SESSION_NAME = "cline_tui"
     
+    # Auto Retry Configuration
+    AUTO_RETRY_ON_TOKEN_LIMIT = True
+    MAX_AUTO_RETRIES = 3
+    RETRY_DELAY_SECONDS = 5
+    
     # 사용자별 설정 저장소
     USER_SETTINGS = {}
     

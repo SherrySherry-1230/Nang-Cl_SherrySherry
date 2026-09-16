@@ -33,6 +33,8 @@ class Task:
     end_time: Optional[float] = None
     process: Optional[Any] = None
     extra_data: Dict[str, Any] = field(default_factory=dict)
+    retry_count: int = 0  # 재시도 횟수 추적
+    original_command: Optional[str] = None  # 원래 명령어 저장
 
 class TaskManager:
     def __init__(self):
