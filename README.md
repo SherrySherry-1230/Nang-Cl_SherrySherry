@@ -2,6 +2,11 @@
 
 **NyangCl_bot** - Telegram을 통해 Cline AI 코딩 작업을 원격으로 제어하는 공용 Bot입니다.
 
+## ⚠️ 플랫폼 지원
+
+- **현재**: macOS 전용
+- **계획**: Linux 및 Windows 지준 예정
+
 ## 🤖 Telegram Bot 정보
 
 - **Bot 이름**: NyangCl_bot
@@ -58,6 +63,8 @@ Telegram에서 **@NyangCl_bot**을 찾아서 `/start` 명령어를 입력하세�
 - `/setproject <directory>` - 프로젝트 디렉토리 설정
 
 ## 🛠️ 로컬 설치 (개발용)
+
+> **⚠️ 현재 macOS 전용입니다. Linux 및 Windows 지원은 계획 중입니다.**
 
 ### 1. Python 가상환경 생성
 
@@ -139,6 +146,13 @@ python3 bot.py
 - **프로젝트 디렉토리 제한**: 사용자별 개인 프로젝트 디렉토리
 - **작업 분리**: 사용자별 작업이 완전히 분리됨
 - **개인 정보 보호**: 사용자 간 작업 내용이 절대 공유되지 않음
+
+## ⚠️ 제한사항
+
+- **플랫폼**: 현재 macOS 전용 (Linux/Windows 지원 계획 중)
+- Cline CLI의 JSON 스트림을 통해서만 Cline과 통신 가능
+- VS Code Extension의 직접 제어는 불가능 (공식 API 없음)
+- 한 번에 하나의 작업만 실행 가능
 
 ## 🏗️ 아키텍처
 
