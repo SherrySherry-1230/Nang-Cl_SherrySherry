@@ -8,6 +8,7 @@ from config import Config
 from task_manager import TaskManager, TaskType, TaskStatus
 from terminal_executor import TerminalExecutor
 from cline_executor import ClineExecutor
+from tui_executor import TUIExecutor
 from telegram_ui import TelegramUI
 
 # Force stdout to be unbuffered
@@ -238,6 +239,22 @@ class TelegramClineBot:
         Config.set_user_project_dir(user_id, project_dir)
         await update.message.reply_text(f"✅ Project directory set to: {project_dir}")
     
+    async def tui_command(self, update: Update, context):
+        """Handle /tui command - Start Cline TUI mode"""
+        user_id = update.effective_user.id
+        
+        if not Config.is_user_allowed(user_id):
+            await update.message.reply_text("❌ 이 Bot을 사용할 권한이 없습니다.")
+            return
+        
+        # tmux 설치 확인
+        import shutil
+        if not shutil.which("tmux"):
+            await update.message.reply_text("❌ tmux가 설치되어 있지 않습니다. 설치 후 다시 시도하세요.")
+            return
+        
+        await self._start_tui_task(update.effective_chat.id, user_id)
+    
     async def handle_message(self, update: Update, context):
         """Handle regular text messages and Korean commands"""
         user_id = update.effective_user.id
@@ -258,7 +275,9 @@ class TelegramClineBot:
             "/재시도": "/retry",
             "/클라인": "/cline",
             "/실행": "/run",
-            "/프로젝트설정": "/setproject"
+            "/프로젝트설정": "/setproject",
+            "/터미널시작": "/tui",
+            "/tui": "/tui"
         }
         
         # Check if it's a Korean command
@@ -303,6 +322,9 @@ class TelegramClineBot:
                     await self.set_project_dir(update, context)
                 else:
                     await update.message.reply_text("Usage: /프로젝트설정 <directory>")
+            elif english_command == "/tui":
+                # Start TUI
+                await self._start_tui_task(update.effective_chat.id, user_id)
             return
         
         # Handle plain text prompt if enabled
@@ -424,6 +446,16 @@ class TelegramClineBot:
         task = self.task_manager.create_task(TaskType.TERMINAL, command, user_id)
         await self._execute_task(chat_id, task)
     
+    async def _start_tui_task(self, chat_id: int, user_id: int):
+        """Start a Cline TUI task"""
+        if self.task_manager.is_task_running(user_id):
+            current_task = self.task_manager.get_current_task(user_id)
+            await self.telegram_ui.send_busy_message(chat_id, current_task)
+            return
+        
+        task = self.task_manager.create_task(TaskType.TUI, "Cline TUI Mode", user_id)
+        await self._execute_task(chat_id, task)
+    
     async def _execute_task(self, chat_id: int, task) -> bool:
         """Execute a task and update Telegram UI"""
         user_id = task.user_id
@@ -444,6 +476,10 @@ class TelegramClineBot:
             cline_executor = ClineExecutor(self.task_manager, self.on_output, self.on_status_change)
             self.user_executors[user_id]['cline'] = cline_executor
             success = cline_executor.execute(task)
+        elif task.task_type == TaskType.TUI:
+            tui_executor = TUIExecutor(self.task_manager, self.on_output, self.on_status_change)
+            self.user_executors[user_id]['tui'] = tui_executor
+            success = tui_executor.execute(task)
         else:
             terminal_executor = TerminalExecutor(self.task_manager, self.on_output, self.on_status_change)
             self.user_executors[user_id]['terminal'] = terminal_executor
@@ -472,6 +508,7 @@ class TelegramClineBot:
         application.add_handler(CommandHandler("cline", self.cline_command))
         application.add_handler(CommandHandler("run", self.run_command))
         application.add_handler(CommandHandler("setproject", self.set_project_dir))
+        application.add_handler(CommandHandler("tui", self.tui_command))
         application.add_handler(CallbackQueryHandler(self.handle_callback_query))
         
         # Always handle text messages for Korean commands

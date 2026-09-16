@@ -16,6 +16,7 @@ class TaskStatus(Enum):
 class TaskType(Enum):
     CLINE = "cline"
     TERMINAL = "terminal"
+    TUI = "tui"
 
 @dataclass
 class Task:

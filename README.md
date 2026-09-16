@@ -70,6 +70,7 @@ Telegram에서 **@NyangCl_bot**을 찾아서 `/start` 또는 `/시작` 명령어
 - `/클라인 <prompt>` / `/cline <prompt>` - Cline 작업 시작
 - `/실행 <command>` / `/run <command>` - 터미널 명령 실행
 - `/프로젝트설정 <directory>` / `/setproject <directory>` - 프로젝트 디렉토리 설정
+- `/터미널시작` / `/tui` - Cline TUI 모드 시작 (tmux 필요)
 
 ## 🛠️ 로컬 설치 (개발용)
 

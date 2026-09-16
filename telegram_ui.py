@@ -9,7 +9,18 @@ class TelegramUI:
         self.bot = bot
     
     def create_task_message(self, task: Task) -> str:
-        task_type_emoji = "🤖" if task.task_type == TaskType.CLINE else "💻"
+        task_type_emoji = {
+            TaskType.CLINE: "🤖",
+            TaskType.TERMINAL: "💻",
+            TaskType.TUI: "🖥️"
+        }.get(task.task_type, "❓")
+        
+        task_type_name = {
+            TaskType.CLINE: "Cline",
+            TaskType.TERMINAL: "Terminal",
+            TaskType.TUI: "Cline TUI"
+        }.get(task.task_type, "Unknown")
+        
         status_emoji = {
             TaskStatus.IDLE: "💤",
             TaskStatus.STARTING: "🚀",
@@ -30,7 +41,13 @@ class TelegramUI:
             else:
                 duration = f" ({__import__('time').time() - task.start_time:.1f}s)"
         
-        message = f"{task_type_emoji} {'Cline' if task.task_type == TaskType.CLINE else 'Terminal'} 작업\n\n"
+        task_type_name = {
+            TaskType.CLINE: "Cline",
+            TaskType.TERMINAL: "Terminal",
+            TaskType.TUI: "Cline TUI"
+        }.get(task.task_type, "Unknown")
+        
+        message = f"{task_type_emoji} {task_type_name} 작업\n\n"
         message += f"작업:\n{task.command}\n\n"
         message += f"상태:\n{status_text} {task.status.value.upper()}{duration}\n"
         
@@ -142,7 +159,12 @@ class TelegramUI:
         else:
             return
         
-        task_type_name = "Cline" if task.task_type == TaskType.CLINE else "Terminal"
+        task_type_name = {
+            TaskType.CLINE: "Cline",
+            TaskType.TERMINAL: "Terminal",
+            TaskType.TUI: "Cline TUI"
+        }.get(task.task_type, "Unknown")
+        
         message = f"{emoji} {task_type_name} {title}\n\n"
         message += f"\"{task.command}\"\n"
         
@@ -194,6 +216,7 @@ class TelegramUI:
 클라인 <prompt> / cline <prompt> - Cline 작업 시작
 실행 <command> / run <command> - 터미널 명령 실행
 프로젝트설정 <dir> / setproject <dir> - 프로젝트 디렉토리 설정
+터미널시작 / tui - Cline TUI 모드 시작 (tmux 필요)
 
 작업 중에는 ⛔ Cancel 버튼이 자동으로 표시됩니다.
 """

@@ -24,6 +24,9 @@ class Config:
     # Command Allowlist
     ALLOWED_COMMANDS = os.getenv("ALLOWED_COMMANDS", "").split(",") if os.getenv("ALLOWED_COMMANDS") else []
     
+    # TUI Configuration
+    TUI_SESSION_NAME = "cline_tui"
+    
     # 사용자별 설정 저장소
     USER_SETTINGS = {}
     
