@@ -181,18 +181,21 @@ class TelegramUI:
         )
     
     async def send_help_message(self, chat_id: int):
-        help_text = """🤖 Telegram Cline Controller 명령어
+        help_text = """🤖 NANG-CL 명령어
 
-/cline <prompt> - Cline 작업 시작
-/run <command> - Terminal 명령 실행
-/status - 현재 상태 확인
-/output - 마지막 작업 출력 확인
-/cancel - 현재 작업 취소
-/retry - 마지막 작업 다시 실행
-/start - Bot 시작
-/help - 도움말
+🇰🇷 한글 명령어 / 🇺🇸 English Commands
 
-작업 중에는 Cancel 버튼이 자동으로 표시됩니다.
+시작 / start - Bot 시작
+도움말 / help - 도움말
+상태 / status - 현재 상태 확인
+출력 / output - 작업 출력 확인
+취소 / cancel - 현재 작업 취소
+재시도 / retry - 마지막 작업 다시 실행
+클라인 <prompt> / cline <prompt> - Cline 작업 시작
+실행 <command> / run <command> - 터미널 명령 실행
+프로젝트설정 <dir> / setproject <dir> - 프로젝트 디렉토리 설정
+
+작업 중에는 ⛔ Cancel 버튼이 자동으로 표시됩니다.
 """
         await self.bot.send_message(
             chat_id=chat_id,

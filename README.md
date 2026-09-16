@@ -29,7 +29,7 @@
 
 ### 1. Bot 사용
 
-Telegram에서 **@NyangCl_bot**을 찾아서 `/start` 명령어를 입력하세요.
+Telegram에서 **@NyangCl_bot**을 찾아서 `/start` 또는 `/시작` 명령어를 입력하세요.
 
 **Bot 정보**:
 - 🤖 **Bot 이름**: NyangCl_bot
@@ -41,26 +41,35 @@ Telegram에서 **@NyangCl_bot**을 찾아서 `/start` 명령어를 입력하세�
 
 ```bash
 /setproject /path/to/your/project
+또는
+/프로젝트설정 /path/to/your/project
 ```
 
 ### 3. 작업 실행
 
 ```bash
-/cline 로그인 버튼 버그 수정해줘
-/run git status
+/cline 로그인 버튼 버그 수정해줘 또는 /클라인 로그인 버튼 버그 수정해줘
+/run git status 또는 /실행 git status
 ```
+
+## ⚠️ 중요
+
+- **Bot은 현재 터미널에서 실행 중입니다** (터미널을 닫으면 Bot도 꺼짐)
+- **항상 켜두려면**: 백그라운드 실행 또는 서버 배포 필요
 
 ## 📱 Telegram 명령어
 
-- `/start` - Bot 시작 및 도움말
-- `/help` - 도움말
-- `/status` - 현재 작업 상태 확인
-- `/output` - 작업 출력 확인
-- `/cancel` - 현재 작업 취소
-- `/retry` - 마지막 작업 다시 실행
-- `/cline <prompt>` - Cline 작업 시작
-- `/run <command>` - 터미널 명령 실행
-- `/setproject <directory>` - 프로젝트 디렉토리 설정
+### 🇰🇷 한글 명령어 / 🇺🇸 English Commands
+
+- `/시작` / `/start` - Bot 시작 및 도움말
+- `/도움말` / `/help` - 도움말
+- `/상태` / `/status` - 현재 작업 상태 확인
+- `/출력` / `/output` - 작업 출력 확인
+- `/취소` / `/cancel` - 현재 작업 취소
+- `/재시도` / `/retry` - 마지막 작업 다시 실행
+- `/클라인 <prompt>` / `/cline <prompt>` - Cline 작업 시작
+- `/실행 <command>` / `/run <command>` - 터미널 명령 실행
+- `/프로젝트설정 <directory>` / `/setproject <directory>` - 프로젝트 디렉토리 설정
 
 ## 🛠️ 로컬 설치 (개발용)
 

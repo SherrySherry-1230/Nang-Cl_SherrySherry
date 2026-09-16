@@ -194,7 +194,7 @@ class TelegramClineBot:
             return
         
         if not context.args:
-            await update.message.reply_text("Usage: /cline <prompt>")
+            await update.message.reply_text("Usage: /cline <prompt> 또는 /클라인 <prompt>")
             return
         
         prompt = " ".join(context.args)
@@ -209,7 +209,7 @@ class TelegramClineBot:
             return
         
         if not context.args:
-            await update.message.reply_text("Usage: /run <command>")
+            await update.message.reply_text("Usage: /run <command> 또는 /실행 <command>")
             return
         
         command = " ".join(context.args)
@@ -239,19 +239,83 @@ class TelegramClineBot:
         await update.message.reply_text(f"✅ Project directory set to: {project_dir}")
     
     async def handle_message(self, update: Update, context):
-        """Handle regular text messages"""
+        """Handle regular text messages and Korean commands"""
         user_id = update.effective_user.id
         
         if not Config.is_user_allowed(user_id):
             await update.message.reply_text("❌ 이 Bot을 사용할 권한이 없습니다.")
             return
         
-        if not Config.ALLOW_PLAIN_TEXT_PROMPT:
-            await update.message.reply_text("Please use commands. Type /help for available commands.")
+        text = update.message.text.strip()
+        
+        # Korean command mapping
+        korean_commands = {
+            "/시작": "/start",
+            "/도움말": "/help", 
+            "/상태": "/status",
+            "/출력": "/output",
+            "/취소": "/cancel",
+            "/재시도": "/retry",
+            "/클라인": "/cline",
+            "/실행": "/run",
+            "/프로젝트설정": "/setproject"
+        }
+        
+        # Check if it's a Korean command
+        if text in korean_commands:
+            english_command = korean_commands[text]
+            # Simulate the English command
+            if english_command == "/start":
+                await self.start(update, context)
+            elif english_command == "/help":
+                await self.help_command(update, context)
+            elif english_command == "/status":
+                await self.status(update, context)
+            elif english_command == "/output":
+                await self.output(update, context)
+            elif english_command == "/cancel":
+                await self.cancel(update, context)
+            elif english_command == "/retry":
+                await self.retry(update, context)
+            elif english_command == "/cline":
+                # Extract prompt after Korean command
+                if text.startswith("/클라인 "):
+                    prompt = text[len("/클라인 "):].strip()
+                    if prompt:
+                        await self._start_cline_task(update.effective_chat.id, prompt, user_id)
+                    else:
+                        await update.message.reply_text("Usage: /클라인 <prompt>")
+                else:
+                    await update.message.reply_text("Usage: /클라인 <prompt>")
+            elif english_command == "/run":
+                # Extract command after Korean command
+                if text.startswith("/실행 "):
+                    command = text[len("/실행 "):].strip()
+                    if command:
+                        await self._start_terminal_task(update.effective_chat.id, command, user_id)
+                    else:
+                        await update.message.reply_text("Usage: /실행 <command>")
+                else:
+                    await update.message.reply_text("Usage: /실행 <command>")
+            elif english_command == "/setproject":
+                # Extract directory after Korean command
+                if text.startswith("/프로젝트설정 "):
+                    directory = text[len("/프로젝트설정 "):].strip()
+                    if directory:
+                        # Set context.args for the set_project function
+                        context.args = [directory]
+                        await self.set_project_dir(update, context)
+                    else:
+                        await update.message.reply_text("Usage: /프로젝트설정 <directory>")
+                else:
+                    await update.message.reply_text("Usage: /프로젝트설정 <directory>")
             return
         
-        text = update.message.text
-        await self._start_cline_task(update.effective_chat.id, text, user_id)
+        # Handle plain text prompt if enabled
+        if Config.ALLOW_PLAIN_TEXT_PROMPT:
+            await self._start_cline_task(update.effective_chat.id, text, user_id)
+        else:
+            await update.message.reply_text("Please use commands. Type /help for available commands.")
     
     async def handle_callback_query(self, update: Update, context):
         """Handle inline button callbacks"""
@@ -404,7 +468,7 @@ class TelegramClineBot:
         # Initialize UI
         self.telegram_ui = TelegramUI(application.bot)
         
-        # Register handlers
+        # Register handlers (English commands only - Telegram API limitation)
         application.add_handler(CommandHandler("start", self.start))
         application.add_handler(CommandHandler("help", self.help_command))
         application.add_handler(CommandHandler("status", self.status))
@@ -416,8 +480,8 @@ class TelegramClineBot:
         application.add_handler(CommandHandler("setproject", self.set_project_dir))
         application.add_handler(CallbackQueryHandler(self.handle_callback_query))
         
-        if Config.ALLOW_PLAIN_TEXT_PROMPT:
-            application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_message))
+        # Always handle text messages for Korean commands
+        application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_message))
         
         # Start status monitoring thread
         monitor_thread = threading.Thread(target=self.run_status_monitor, daemon=True)
