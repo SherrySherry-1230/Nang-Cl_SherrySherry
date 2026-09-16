@@ -279,34 +279,28 @@ class TelegramClineBot:
                 await self.retry(update, context)
             elif english_command == "/cline":
                 # Extract prompt after Korean command
-                if text.startswith("/클라인 "):
-                    prompt = text[len("/클라인 "):].strip()
-                    if prompt:
-                        await self._start_cline_task(update.effective_chat.id, prompt, user_id)
-                    else:
-                        await update.message.reply_text("Usage: /클라인 <prompt>")
+                parts = text.split(maxsplit=1)
+                if len(parts) > 1:
+                    prompt = parts[1]
+                    await self._start_cline_task(update.effective_chat.id, prompt, user_id)
                 else:
                     await update.message.reply_text("Usage: /클라인 <prompt>")
             elif english_command == "/run":
                 # Extract command after Korean command
-                if text.startswith("/실행 "):
-                    command = text[len("/실행 "):].strip()
-                    if command:
-                        await self._start_terminal_task(update.effective_chat.id, command, user_id)
-                    else:
-                        await update.message.reply_text("Usage: /실행 <command>")
+                parts = text.split(maxsplit=1)
+                if len(parts) > 1:
+                    command = parts[1]
+                    await self._start_terminal_task(update.effective_chat.id, command, user_id)
                 else:
                     await update.message.reply_text("Usage: /실행 <command>")
             elif english_command == "/setproject":
                 # Extract directory after Korean command
-                if text.startswith("/프로젝트설정 "):
-                    directory = text[len("/프로젝트설정 "):].strip()
-                    if directory:
-                        # Set context.args for the set_project function
-                        context.args = [directory]
-                        await self.set_project_dir(update, context)
-                    else:
-                        await update.message.reply_text("Usage: /프로젝트설정 <directory>")
+                parts = text.split(maxsplit=1)
+                if len(parts) > 1:
+                    directory = parts[1]
+                    # Set context.args for the set_project function
+                    context.args = [directory]
+                    await self.set_project_dir(update, context)
                 else:
                     await update.message.reply_text("Usage: /프로젝트설정 <directory>")
             return
