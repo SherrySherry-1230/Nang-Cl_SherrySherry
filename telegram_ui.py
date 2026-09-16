@@ -161,12 +161,12 @@ class TelegramUI:
         
         task_type_name = {
             TaskType.CLINE: "Cline",
-            TaskType.TERMINAL: "Terminal",
+            TaskType.TERMINAL: "터미널",
             TaskType.TUI: "Cline TUI"
-        }.get(task.task_type, "Unknown")
+        }.get(task.task_type, "알 수 없음")
         
         message = f"{emoji} {task_type_name} {title}\n\n"
-        message += f"\"{task.command}\"\n"
+        message += f"작업: \"{task.command}\"\n"
         
         if task.exit_code is not None:
             message += f"\nExit code: {task.exit_code}"
@@ -189,13 +189,13 @@ class TelegramUI:
     async def send_error_message(self, chat_id: int, error_message: str):
         await self.bot.send_message(
             chat_id=chat_id,
-            text=f"❌ {error_message}"
+            text=f"❌ 오류: {error_message}"
         )
     
     async def send_busy_message(self, chat_id: int, current_task: Task):
         message = "⚠️ 현재 작업이 실행 중입니다.\n\n"
         message += f"현재 작업:\n{current_task.command}\n\n"
-        message += "먼저 작업을 완료하거나 Cancel 해주세요."
+        message += "먼저 작업을 완료하거나 취소해주세요."
         
         await self.bot.send_message(
             chat_id=chat_id,
@@ -218,7 +218,15 @@ class TelegramUI:
 프로젝트설정 <dir> / setproject <dir> - 프로젝트 디렉토리 설정
 터미널시작 / tui - Cline TUI 모드 시작 (tmux 필요)
 
-작업 중에는 ⛔ Cancel 버튼이 자동으로 표시됩니다.
+💡 사용법:
+- /클라인 또는 /cline 뒤에 작업 내용을 입력하세요
+- /실행 또는 /run 뒤에 터미널 명령을 입력하세요
+- 작업 중에는 ⛔ Cancel 버튼이 자동으로 표시됩니다
+- 작업 완료 후 🔄 Retry 버튼으로 다시 실행할 수 있습니다
+
+⚠️ 중요:
+- Bot은 현재 터미널에서 실행 중입니다 (터미널을 닫으면 Bot도 꺼짐)
+- 항상 켜두려면 백그라운드 실행 또는 서버 배포 필요
 """
         await self.bot.send_message(
             chat_id=chat_id,

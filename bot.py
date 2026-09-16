@@ -86,6 +86,7 @@ class TelegramClineBot:
             return
         
         await self.telegram_ui.send_help_message(update.effective_chat.id)
+        await update.message.reply_text("👋 안녕하세요! NANG-CL에 오신 것을 환영합니다.\n\n위 명령어들을 사용하여 Cline을 원격으로 제어할 수 있습니다.")
     
     async def help_command(self, update: Update, context):
         """Handle /help command"""
@@ -124,7 +125,7 @@ class TelegramClineBot:
             if last_task:
                 await self.telegram_ui.send_output_message(update.effective_chat.id, last_task)
             else:
-                await update.message.reply_text("📋 No output available")
+                await update.message.reply_text("📋 출력 내용이 없습니다.")
     
     async def cancel(self, update: Update, context):
         """Handle /cancel command"""
@@ -136,7 +137,7 @@ class TelegramClineBot:
         
         task = self.task_manager.get_current_task(user_id)
         if not task:
-            await update.message.reply_text("💤 No running task to cancel")
+            await update.message.reply_text("💤 취소할 실행 중인 작업이 없습니다.")
             return
         
         # Update status to cancelling
@@ -160,9 +161,9 @@ class TelegramClineBot:
             success = False
         
         if success:
-            await update.message.reply_text("🛑 Cancel 요청 중...")
+            await update.message.reply_text("🛑 취소 요청 중...")
         else:
-            await update.message.reply_text("❌ Failed to cancel task")
+            await update.message.reply_text("❌ 작업 취소 실패")
     
     async def retry(self, update: Update, context):
         """Handle /retry command"""
@@ -174,7 +175,7 @@ class TelegramClineBot:
         
         last_task = self.task_manager.get_last_task(user_id)
         if not last_task:
-            await update.message.reply_text("📋 No previous task to retry")
+            await update.message.reply_text("📋 재시도할 이전 작업이 없습니다.")
             return
         
         # Create new task with same command
@@ -182,9 +183,9 @@ class TelegramClineBot:
         
         # Start the task
         if await self._execute_task(update.effective_chat.id, new_task):
-            await update.message.reply_text(f"🔄 Retrying: {last_task.command}")
+            await update.message.reply_text(f"🔄 재시도 중: {last_task.command}")
         else:
-            await update.message.reply_text("❌ Failed to start retry")
+            await update.message.reply_text("❌ 재시도 시작 실패")
     
     async def cline_command(self, update: Update, context):
         """Handle /cline command"""
@@ -195,7 +196,7 @@ class TelegramClineBot:
             return
         
         if not context.args:
-            await update.message.reply_text("Usage: /cline <prompt> 또는 /클라인 <prompt>")
+            await update.message.reply_text("사용법: /cline <prompt> 또는 /클라인 <prompt>")
             return
         
         prompt = " ".join(context.args)
@@ -210,7 +211,7 @@ class TelegramClineBot:
             return
         
         if not context.args:
-            await update.message.reply_text("Usage: /run <command> 또는 /실행 <command>")
+            await update.message.reply_text("사용법: /run <command> 또는 /실행 <command>")
             return
         
         command = " ".join(context.args)
